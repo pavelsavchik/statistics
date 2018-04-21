@@ -1,36 +1,38 @@
 package me.savchik.statistics.entity;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import java.math.BigDecimal;
 import static java.lang.System.currentTimeMillis;
 
 public class Transaction {
 
-    private BigDecimal amount;
+    private double amount;
 
-    private Long time;
+    private long time;
 
-    public BigDecimal getAmount() {
+
+
+    public Transaction(double amount, long time) {
+        this.amount = amount;
+        this.time = time;
+    }
+
+    public double getAmount() {
         return amount;
     }
 
-    public void setAmount(BigDecimal amount) {
+    public void setAmount(double amount) {
         this.amount = amount;
     }
 
-    public Long getTime() {
+    public long getTime() {
         return time;
     }
 
-    public void setTime(Long time) {
+    public void setTime(long time) {
         this.time = time;
     }
 
     public boolean isOlderThanMinute() {
         long currentTimeMillis = currentTimeMillis();
-        return currentTimeMillis >= time && currentTimeMillis - time < 60000;
+        return !(currentTimeMillis >= time && currentTimeMillis - time < 60000);
     }
 }

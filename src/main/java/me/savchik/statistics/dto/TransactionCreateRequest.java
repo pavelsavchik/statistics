@@ -1,26 +1,33 @@
 package me.savchik.statistics.dto;
 
-import java.math.BigDecimal;
+import javax.validation.constraints.NotNull;
 
 public class TransactionCreateRequest {
 
-    private BigDecimal amount;
+    @NotNull
+    private double amount;
 
-    private Long timestamp;
+    @NotNull
+    private long timestamp;
 
-    public BigDecimal getAmount() {
+    public TransactionCreateRequest(double amount, long timestamp) {
+        this.amount = amount;
+        this.timestamp = timestamp;
+    }
+
+    public double getAmount() {
         return amount;
     }
 
-    public void setAmount(BigDecimal amount) {
+    public void setAmount(double amount) {
         this.amount = amount;
     }
 
-    public Long getTimestamp() {
+    public long getTimestamp() {
         return timestamp;
     }
 
-    public void setTimestamp(Long timestamp) {
+    public void setTimestamp(long timestamp) {
         this.timestamp = timestamp;
     }
 }

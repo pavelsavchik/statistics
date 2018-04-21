@@ -8,10 +8,7 @@ import org.springframework.stereotype.Component;
 public class TransactionMapper {
 
     public Transaction requestToTransaction(TransactionCreateRequest request) {
-        Transaction transaction = new Transaction();
-        transaction.setAmount(request.getAmount());
-        transaction.setTime(request.getTimestamp());
-        return transaction;
+        return new Transaction(request.getAmount(), request.getTimestamp());
     }
 
 }
