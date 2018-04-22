@@ -2,6 +2,9 @@ package me.savchik.statistics.repository;
 
 import me.savchik.statistics.entity.Statistics;
 import me.savchik.statistics.entity.Transaction;
+import me.savchik.statistics.service.TransactionService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import java.util.LinkedList;
 import java.util.List;
@@ -24,14 +27,18 @@ public class InMemoryTransactionRepository implements TransactionRepository {
 
     private final Timer timer;
 
-    public InMemoryTransactionRepository() {
+    private final TransactionService service;
+
+    @Autowired
+    public InMemoryTransactionRepository(TransactionService service, @Value("${statistics.updatePeriod.ms}") Long updatePeriod) {
+        this.service = service;
         this.timer = new Timer();
         this.transactionsLock = new ReentrantReadWriteLock();
         this.statisticsLock = new ReentrantReadWriteLock();
         this.transactions = new LinkedList<>();
         calculateStatistics();
 
-        scheduleStatisticsCalculation();
+        scheduleStatisticsCalculation(updatePeriod);
     }
 
     @Override
@@ -41,7 +48,7 @@ public class InMemoryTransactionRepository implements TransactionRepository {
         transactionsWrite.lock();
 
         try {
-            if (!transaction.isOlderThanMinute()) {
+            if (!service.isExpired(transaction)) {
                 transactions.add(transaction);
                 return true;
             }
@@ -63,14 +70,13 @@ public class InMemoryTransactionRepository implements TransactionRepository {
         }
     }
 
-    private void scheduleStatisticsCalculation() {
+    private void scheduleStatisticsCalculation(Long updatePeriod) {
         timer.schedule(new TimerTask() {
             @Override
             public void run() {
                 calculateStatistics();
             }
-        }, 0,500);
-
+        }, 0, updatePeriod);
     }
 
     private void calculateStatistics() {
@@ -92,7 +98,7 @@ public class InMemoryTransactionRepository implements TransactionRepository {
     }
 
     private void cleanOld() {
-        transactions.removeIf(Transaction::isOlderThanMinute);
+        transactions.removeIf(service::isExpired);
     }
 
 }

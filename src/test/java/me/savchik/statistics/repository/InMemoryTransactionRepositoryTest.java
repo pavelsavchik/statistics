@@ -1,14 +1,19 @@
 package me.savchik.statistics.repository;
 
 import me.savchik.statistics.entity.Transaction;
+import me.savchik.statistics.service.TransactionService;
 import org.junit.Test;
+
 import static java.util.concurrent.CompletableFuture.allOf;
 import static java.util.concurrent.CompletableFuture.runAsync;
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class InMemoryTransactionRepositoryTest {
 
-    private InMemoryTransactionRepository repository = new InMemoryTransactionRepository();
+    private InMemoryTransactionRepository repository = new InMemoryTransactionRepository(
+            new TransactionService(60000L),
+            500L
+    );
 
     private void addTransaction() {
         addTransaction(10.);
@@ -48,8 +53,8 @@ public class InMemoryTransactionRepositoryTest {
     @Test
     public void getLastMinuteStatistics_concurrent_valuesAreRight() throws InterruptedException {
         Runnable task = () -> {
-            for(int i = 0; i < 10000; i++) {
-                addTransaction((double)i);
+            for (int i = 0; i < 10000; i++) {
+                addTransaction((double) i);
             }
         };
         allOf(runAsync(task), runAsync(task), runAsync(task), runAsync(task), runAsync(task)).join();

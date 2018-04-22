@@ -29,8 +29,4 @@ public class Transaction {
         this.time = time;
     }
 
-    public boolean isOlderThanMinute() {
-        Long currentTimeMillis = currentTimeMillis();
-        return !(currentTimeMillis >= time && currentTimeMillis - time < 60000);
-    }
 }
