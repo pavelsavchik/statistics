@@ -36,7 +36,8 @@ class ExceptionTranslator {
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ResponseBody
     ExceptionResponse processHttpMessageNotReadableException(HttpMessageNotReadableException exception) {
-        return new ExceptionResponse(null, null);
+        List<ErrorMessage> errors = Collections.singletonList(new ErrorMessage("Invalid json"));
+        return new ExceptionResponse(errors, null);
     }
 
 

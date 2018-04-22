@@ -18,14 +18,10 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
-
-import static org.assertj.core.internal.bytebuddy.matcher.ElementMatchers.is;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @RunWith(SpringRunner.class)
 @WebMvcTest(TransactionController.class)
@@ -54,7 +50,7 @@ public class TransactionControllerTest {
     }
 
     @Test
-    public void createWithActualTimestamp_201withEmptyBody() throws Exception {
+    public void  POST_actualTimestamp_201withEmptyBody() throws Exception {
         given(transactionRepository.addTransaction(any(Transaction.class))).willReturn(true);
 
         mvc.perform(post("/transactions")
@@ -65,7 +61,7 @@ public class TransactionControllerTest {
     }
 
     @Test
-    public void createWithExpiredTimestamp_204withEmptyBody() throws Exception {
+    public void  POST_expiredTimestamp_204withEmptyBody() throws Exception {
         given(transactionRepository.addTransaction(any(Transaction.class))).willReturn(false);
 
         mvc.perform(post("/transactions")
@@ -76,7 +72,7 @@ public class TransactionControllerTest {
     }
 
     @Test
-    public void createWithEmptyJson_404() throws Exception {
+    public void  POST_emptyJson_404() throws Exception {
         mvc.perform(post("/transactions")
                 .content("{}")
                 .contentType(MediaType.APPLICATION_JSON))
@@ -87,7 +83,7 @@ public class TransactionControllerTest {
     }
 
     @Test
-    public void createWithoutAmount_404() throws Exception {
+    public void  POST_withoutAmount_404() throws Exception {
         mvc.perform(post("/transactions")
                 .content(transactionJson(null))
                 .contentType(MediaType.APPLICATION_JSON))
@@ -97,7 +93,7 @@ public class TransactionControllerTest {
     }
 
     @Test
-    public void createWithoutTimestamp_404() throws Exception {
+    public void  POST_withoutTimestamp_404() throws Exception {
         mvc.perform(post("/transactions")
                 .content(transactionJson(10D, null))
                 .contentType(MediaType.APPLICATION_JSON))
@@ -107,13 +103,24 @@ public class TransactionControllerTest {
     }
 
     @Test
-    public void createWithIncorrectAmount_404() throws Exception {
+    public void  POST_withIncorrectAmount_404() throws Exception {
         mvc.perform(post("/transactions")
                 .content(transactionJson(10D).replace("10", "\"somestring\""))
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().is(400))
-                .andExpect(jsonPath("$.fieldErrors", Matchers.hasSize(1)))
-                .andExpect(jsonPath(fieldError("amount", "must not be null")).exists());
+                .andExpect(jsonPath("$.errors", Matchers.hasSize(1)))
+                .andExpect(jsonPath("$.errors[0].message", Matchers.is("Invalid json")));
+    }
+
+    @Test
+    public void  POST_withIncorrectTimestamp_404() throws Exception {
+        Long timestamp = System.currentTimeMillis();
+        mvc.perform(post("/transactions")
+                .content(transactionJson(10D, timestamp).replace(timestamp.toString(), "\"somestring\""))
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().is(400))
+                .andExpect(jsonPath("$.errors", Matchers.hasSize(1)))
+                .andExpect(jsonPath("$.errors[0].message", Matchers.is("Invalid json")));
     }
 
     private String transactionJson() throws JsonProcessingException {
@@ -121,8 +128,7 @@ public class TransactionControllerTest {
     }
 
     private String transactionJson(Double amount) throws JsonProcessingException {
-        TransactionCreateRequest request = new TransactionCreateRequest(amount, System.currentTimeMillis());
-        return objectMapper.writeValueAsString(request);
+        return transactionJson(amount, System.currentTimeMillis());
     }
 
     private String transactionJson(Double amount, Long timestamp) throws JsonProcessingException {

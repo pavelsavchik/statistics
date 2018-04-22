@@ -1,5 +1,7 @@
 package me.savchik.statistics.entity;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.DoubleSummaryStatistics;
 
 public class Statistics {
@@ -23,11 +25,19 @@ public class Statistics {
     }
 
     public Statistics(DoubleSummaryStatistics statistics) {
-        this.sum = statistics.getSum();
-        this.avg = statistics.getAverage();
-        this.max = statistics.getMax();
-        this.min = statistics.getMin();
+        this.sum = round(statistics.getSum());
+        this.avg = round(statistics.getAverage());
+        this.max = round(statistics.getMax());
+        this.min = round(statistics.getMin());
         this.count = statistics.getCount();
+    }
+
+    public Statistics(Double sum, Double avg, Double max, Double min, Long count) {
+        this.sum = round(sum);
+        this.avg = round(avg);
+        this.max = round(max);
+        this.min = round(min);
+        this.count = count;
     }
 
     public Double getSum() {
@@ -48,6 +58,13 @@ public class Statistics {
 
     public Long getCount() {
         return count;
+    }
+
+    private Double round(Double value) {
+        BigDecimal rounded = new BigDecimal(value);
+        rounded = rounded.setScale(3, RoundingMode.HALF_UP);
+        return rounded.doubleValue();
+
     }
 
 }
