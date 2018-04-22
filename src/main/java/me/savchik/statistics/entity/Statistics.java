@@ -4,22 +4,22 @@ import java.util.DoubleSummaryStatistics;
 
 public class Statistics {
 
-    private final double sum;
+    private final Double sum;
 
-    private final double avg;
+    private final Double avg;
 
-    private final double max;
+    private final Double max;
 
-    private final double min;
+    private final Double min;
 
-    private final long count;
+    private final Long count;
 
     public Statistics() {
-        sum = 0;
-        avg = 0;
-        max = 0;
-        min = 0;
-        count = 0;
+        sum = 0D;
+        avg = 0D;
+        max = 0D;
+        min = 0D;
+        count = 0L;
     }
 
     public Statistics(DoubleSummaryStatistics statistics) {
@@ -30,23 +30,23 @@ public class Statistics {
         this.count = statistics.getCount();
     }
 
-    public double getSum() {
+    public Double getSum() {
         return sum;
     }
 
-    public double getAvg() {
+    public Double getAvg() {
         return avg;
     }
 
-    public double getMax() {
+    public Double getMax() {
         return max;
     }
 
-    public double getMin() {
+    public Double getMin() {
         return min;
     }
 
-    public long getCount() {
+    public Long getCount() {
         return count;
     }
 
