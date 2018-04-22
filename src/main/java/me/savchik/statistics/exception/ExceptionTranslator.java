@@ -5,6 +5,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
+import org.springframework.web.HttpMediaTypeNotSupportedException;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.MissingServletRequestParameterException;
@@ -24,7 +25,9 @@ class ExceptionTranslator {
 
     @ExceptionHandler({HttpRequestMethodNotSupportedException.class,
             MissingServletRequestParameterException.class,
-            MethodArgumentTypeMismatchException.class})
+            MethodArgumentTypeMismatchException.class,
+            HttpMediaTypeNotSupportedException.class
+    })
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ResponseBody
     ExceptionResponse processRequestException(Exception exception) {
@@ -32,7 +35,7 @@ class ExceptionTranslator {
         return new ExceptionResponse(errors, null);
     }
 
-    @ExceptionHandler(HttpMessageNotReadableException.class)
+    @ExceptionHandler({HttpMessageNotReadableException.class})
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ResponseBody
     ExceptionResponse processHttpMessageNotReadableException(HttpMessageNotReadableException exception) {

@@ -123,6 +123,17 @@ public class TransactionControllerTest {
                 .andExpect(jsonPath("$.errors[0].message", Matchers.is("Invalid json")));
     }
 
+    @Test
+    public void  POST_xml_404() throws Exception {
+        Long timestamp = System.currentTimeMillis();
+        mvc.perform(post("/transactions")
+                .content(transactionJson(10D, timestamp).replace(timestamp.toString(), "\"somestring\""))
+                .contentType(MediaType.APPLICATION_XML))
+                .andExpect(status().is(400))
+                .andExpect(jsonPath("$.errors", Matchers.hasSize(1)))
+                .andExpect(jsonPath("$.errors[0].message", Matchers.is("Content type 'application/xml' not supported")));
+    }
+
     private String transactionJson() throws JsonProcessingException {
         return transactionJson(10.);
     }
