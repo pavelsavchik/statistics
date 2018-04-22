@@ -31,7 +31,7 @@ class ExceptionTranslator {
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ResponseBody
     ExceptionResponse processRequestException(Exception exception) {
-        List errors = Collections.singletonList(new ErrorMessage(exception.getMessage()));
+        List<ErrorMessage> errors = Collections.singletonList(new ErrorMessage(exception.getMessage()));
         return new ExceptionResponse(errors, null);
     }
 
@@ -62,7 +62,7 @@ class ExceptionTranslator {
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ResponseBody
     ExceptionResponse processConstraintViolationException(ConstraintViolationException exception) {
-        List fieldErrors = exception.getConstraintViolations().stream()
+        List<ValidationError> fieldErrors = exception.getConstraintViolations().stream()
                 .map(violation -> new ValidationError(violation.getMessage(), violation.getPropertyPath().toString()))
                 .collect(Collectors.toList());
         return new ExceptionResponse(null, fieldErrors);

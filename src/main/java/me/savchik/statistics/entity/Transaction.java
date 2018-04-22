@@ -8,8 +8,6 @@ public class Transaction {
 
     private Long time;
 
-
-
     public Transaction(Double amount, Long time) {
         this.amount = amount;
         this.time = time;
