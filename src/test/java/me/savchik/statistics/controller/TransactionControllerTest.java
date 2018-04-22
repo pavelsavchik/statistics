@@ -3,21 +3,18 @@ package me.savchik.statistics.controller;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import me.savchik.statistics.dto.TransactionCreateRequest;
-import me.savchik.statistics.entity.Transaction;
-import me.savchik.statistics.mapper.TransactionMapper;
-import me.savchik.statistics.repository.TransactionRepository;
+import me.savchik.statistics.service.TransactionService;
 import org.hamcrest.Matchers;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.context.annotation.Bean;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
+
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -27,22 +24,13 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @WebMvcTest(TransactionController.class)
 public class TransactionControllerTest {
 
-    @TestConfiguration
-    static class EmployeeServiceImplTestContextConfiguration {
-
-        @Bean
-        public TransactionMapper transactionMapper() {
-            return new TransactionMapper();
-        }
-    }
-
     private ObjectMapper objectMapper;
 
     @Autowired
     private MockMvc mvc;
 
     @MockBean
-    private TransactionRepository transactionRepository;
+    private TransactionService service;
 
     @Before
     public void setup() {
@@ -51,7 +39,7 @@ public class TransactionControllerTest {
 
     @Test
     public void  POST_actualTimestamp_201withEmptyBody() throws Exception {
-        given(transactionRepository.addTransaction(any(Transaction.class))).willReturn(true);
+        given(service.addTransaction(any(TransactionCreateRequest.class))).willReturn(true);
 
         mvc.perform(post("/transactions")
                           .content(transactionJson())
@@ -62,7 +50,7 @@ public class TransactionControllerTest {
 
     @Test
     public void  POST_expiredTimestamp_204withEmptyBody() throws Exception {
-        given(transactionRepository.addTransaction(any(Transaction.class))).willReturn(false);
+        given(service.addTransaction(any(TransactionCreateRequest.class))).willReturn(false);
 
         mvc.perform(post("/transactions")
                 .content(transactionJson())

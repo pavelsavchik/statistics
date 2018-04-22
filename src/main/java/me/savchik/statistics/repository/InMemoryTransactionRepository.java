@@ -2,10 +2,11 @@ package me.savchik.statistics.repository;
 
 import me.savchik.statistics.entity.Statistics;
 import me.savchik.statistics.entity.Transaction;
-import me.savchik.statistics.service.TransactionService;
+import me.savchik.statistics.utils.TransactionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
+
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Timer;
@@ -27,11 +28,11 @@ public class InMemoryTransactionRepository implements TransactionRepository {
 
     private final Timer timer;
 
-    private final TransactionService service;
+    private final TransactionUtils utils;
 
     @Autowired
-    public InMemoryTransactionRepository(TransactionService service, @Value("${statistics.updatePeriod.ms}") Long updatePeriod) {
-        this.service = service;
+    public InMemoryTransactionRepository(TransactionUtils utils, @Value("${statistics.updatePeriod.ms}") Long updatePeriod) {
+        this.utils = utils;
         this.timer = new Timer();
         this.transactionsLock = new ReentrantReadWriteLock();
         this.statisticsLock = new ReentrantReadWriteLock();
@@ -48,7 +49,7 @@ public class InMemoryTransactionRepository implements TransactionRepository {
         transactionsWrite.lock();
 
         try {
-            if (!service.isExpired(transaction)) {
+            if (!utils.isExpired(transaction)) {
                 transactions.add(transaction);
                 return true;
             }
@@ -59,7 +60,7 @@ public class InMemoryTransactionRepository implements TransactionRepository {
     }
 
     @Override
-    public Statistics getLastMinuteStatistics() {
+    public Statistics getStatistics() {
         Lock statisticsRead = statisticsLock.readLock();
 
         statisticsRead.lock();
@@ -98,7 +99,7 @@ public class InMemoryTransactionRepository implements TransactionRepository {
     }
 
     private void cleanOld() {
-        transactions.removeIf(service::isExpired);
+        transactions.removeIf(utils::isExpired);
     }
 
 }

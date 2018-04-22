@@ -1,7 +1,7 @@
 package me.savchik.statistics.controller;
 
 import me.savchik.statistics.entity.Statistics;
-import me.savchik.statistics.repository.TransactionRepository;
+import me.savchik.statistics.service.StatisticsService;
 import org.hamcrest.Matchers;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -25,12 +25,12 @@ public class StatisticsControllerTest {
     private MockMvc mvc;
 
     @MockBean
-    private TransactionRepository transactionRepository;
+    private StatisticsService statisticsService;
 
     @Test
     public void GET_statisticsWasCalculated_valuesAreCorrect() throws Exception {
         Statistics statistics = new Statistics(10.5, 5D, 5D, 3.2, 3L);
-        given(transactionRepository.getLastMinuteStatistics()).willReturn(statistics);
+        given(statisticsService.getStatistics()).willReturn(statistics);
 
         mvc.perform(get("/statistics")
                 .contentType(MediaType.APPLICATION_JSON))
@@ -45,7 +45,7 @@ public class StatisticsControllerTest {
     @Test
     public void GET_statisticsIsEmpty_valuesAreZero() throws Exception {
         Statistics statistics = new Statistics();
-        given(transactionRepository.getLastMinuteStatistics()).willReturn(statistics);
+        given(statisticsService.getStatistics()).willReturn(statistics);
 
         mvc.perform(get("/statistics")
                 .contentType(MediaType.APPLICATION_JSON))

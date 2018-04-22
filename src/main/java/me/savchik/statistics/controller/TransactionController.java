@@ -3,12 +3,15 @@ package me.savchik.statistics.controller;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import me.savchik.statistics.dto.TransactionCreateRequest;
-import me.savchik.statistics.mapper.TransactionMapper;
-import me.savchik.statistics.repository.TransactionRepository;
+import me.savchik.statistics.service.TransactionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RestController;
+
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 
@@ -17,14 +20,11 @@ import javax.validation.Valid;
 @Validated
 public class TransactionController {
 
-    private final TransactionMapper mapper;
-
-    private final TransactionRepository repository;
+    private TransactionService service;
 
     @Autowired
-    public TransactionController(TransactionMapper mapper, TransactionRepository repository) {
-        this.mapper = mapper;
-        this.repository = repository;
+    public TransactionController(TransactionService service) {
+        this.service = service;
     }
 
     @RequestMapping(method = RequestMethod.POST)
@@ -33,7 +33,7 @@ public class TransactionController {
             @ApiResponse(code = 204, message = "Transaction is older than 60 seconds"),
             @ApiResponse(code = 400, message = "Validation failed")})
     public void create(@Valid @RequestBody TransactionCreateRequest request, HttpServletResponse response) {
-        HttpStatus status = repository.addTransaction(mapper.requestToTransaction(request)) ?
+        HttpStatus status = service.addTransaction(request) ?
                 HttpStatus.CREATED :
                 HttpStatus.NO_CONTENT;
         response.setStatus(status.value());

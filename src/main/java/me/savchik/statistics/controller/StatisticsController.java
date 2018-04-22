@@ -1,7 +1,7 @@
 package me.savchik.statistics.controller;
 
 import me.savchik.statistics.entity.Statistics;
-import me.savchik.statistics.repository.TransactionRepository;
+import me.savchik.statistics.service.StatisticsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -11,16 +11,16 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/statistics")
 public class StatisticsController {
 
-    private TransactionRepository repository;
+    private StatisticsService service;
 
     @Autowired
-    public StatisticsController(TransactionRepository repository) {
-        this.repository = repository;
+    public StatisticsController(StatisticsService service) {
+        this.service = service;
     }
 
     @GetMapping
     public Statistics getStatistics() {
-        return repository.getLastMinuteStatistics();
+        return service.getStatistics();
     }
 
 }

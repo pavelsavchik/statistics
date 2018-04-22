@@ -1,7 +1,7 @@
 package me.savchik.statistics.repository;
 
 import me.savchik.statistics.entity.Transaction;
-import me.savchik.statistics.service.TransactionService;
+import me.savchik.statistics.utils.TransactionUtils;
 import org.junit.Test;
 
 import static java.util.concurrent.CompletableFuture.allOf;
@@ -11,7 +11,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class InMemoryTransactionRepositoryTest {
 
     private InMemoryTransactionRepository repository = new InMemoryTransactionRepository(
-            new TransactionService(60000L),
+            new TransactionUtils(60000L),
             500L
     );
 
@@ -34,20 +34,20 @@ public class InMemoryTransactionRepositoryTest {
         addTransaction(3.6);
 
         Thread.sleep(1000);
-        assertThat(repository.getLastMinuteStatistics().getSum()).isEqualTo(7.5);
-        assertThat(repository.getLastMinuteStatistics().getAvg()).isEqualTo(2.5);
-        assertThat(repository.getLastMinuteStatistics().getCount()).isEqualTo(3);
-        assertThat(repository.getLastMinuteStatistics().getMax()).isEqualTo(3.6);
-        assertThat(repository.getLastMinuteStatistics().getMin()).isEqualTo(1.5);
+        assertThat(repository.getStatistics().getSum()).isEqualTo(7.5);
+        assertThat(repository.getStatistics().getAvg()).isEqualTo(2.5);
+        assertThat(repository.getStatistics().getCount()).isEqualTo(3);
+        assertThat(repository.getStatistics().getMax()).isEqualTo(3.6);
+        assertThat(repository.getStatistics().getMin()).isEqualTo(1.5);
     }
 
     @Test
     public void getLastMinuteStatistics_noTransactions_valuesAreZero() throws InterruptedException {
-        assertThat(repository.getLastMinuteStatistics().getSum()).isEqualTo(0);
-        assertThat(repository.getLastMinuteStatistics().getAvg()).isEqualTo(0);
-        assertThat(repository.getLastMinuteStatistics().getCount()).isEqualTo(0);
-        assertThat(repository.getLastMinuteStatistics().getMax()).isEqualTo(0);
-        assertThat(repository.getLastMinuteStatistics().getMin()).isEqualTo(0);
+        assertThat(repository.getStatistics().getSum()).isEqualTo(0);
+        assertThat(repository.getStatistics().getAvg()).isEqualTo(0);
+        assertThat(repository.getStatistics().getCount()).isEqualTo(0);
+        assertThat(repository.getStatistics().getMax()).isEqualTo(0);
+        assertThat(repository.getStatistics().getMin()).isEqualTo(0);
     }
 
     @Test
@@ -61,11 +61,11 @@ public class InMemoryTransactionRepositoryTest {
 
         Thread.sleep(1000);
 
-        assertThat(repository.getLastMinuteStatistics().getSum()).isEqualTo(249975000);
-        assertThat(repository.getLastMinuteStatistics().getAvg()).isEqualTo(4999.5);
-        assertThat(repository.getLastMinuteStatistics().getCount()).isEqualTo(50000);
-        assertThat(repository.getLastMinuteStatistics().getMax()).isEqualTo(9999);
-        assertThat(repository.getLastMinuteStatistics().getMin()).isEqualTo(0);
+        assertThat(repository.getStatistics().getSum()).isEqualTo(249975000);
+        assertThat(repository.getStatistics().getAvg()).isEqualTo(4999.5);
+        assertThat(repository.getStatistics().getCount()).isEqualTo(50000);
+        assertThat(repository.getStatistics().getMax()).isEqualTo(9999);
+        assertThat(repository.getStatistics().getMin()).isEqualTo(0);
     }
 
     @Test
@@ -76,11 +76,11 @@ public class InMemoryTransactionRepositoryTest {
         addTransaction(3.6, expiredTimestamp);
 
         Thread.sleep(1000);
-        assertThat(repository.getLastMinuteStatistics().getSum()).isEqualTo(0);
-        assertThat(repository.getLastMinuteStatistics().getAvg()).isEqualTo(0);
-        assertThat(repository.getLastMinuteStatistics().getCount()).isEqualTo(0);
-        assertThat(repository.getLastMinuteStatistics().getMax()).isEqualTo(0);
-        assertThat(repository.getLastMinuteStatistics().getMin()).isEqualTo(0);
+        assertThat(repository.getStatistics().getSum()).isEqualTo(0);
+        assertThat(repository.getStatistics().getAvg()).isEqualTo(0);
+        assertThat(repository.getStatistics().getCount()).isEqualTo(0);
+        assertThat(repository.getStatistics().getMax()).isEqualTo(0);
+        assertThat(repository.getStatistics().getMin()).isEqualTo(0);
     }
 
     @Test
@@ -91,18 +91,18 @@ public class InMemoryTransactionRepositoryTest {
         addTransaction(3.6, actualTimestamp);
 
         Thread.sleep(1000);
-        assertThat(repository.getLastMinuteStatistics().getSum()).isEqualTo(7.5);
-        assertThat(repository.getLastMinuteStatistics().getAvg()).isEqualTo(2.5);
-        assertThat(repository.getLastMinuteStatistics().getCount()).isEqualTo(3);
-        assertThat(repository.getLastMinuteStatistics().getMax()).isEqualTo(3.6);
-        assertThat(repository.getLastMinuteStatistics().getMin()).isEqualTo(1.5);
+        assertThat(repository.getStatistics().getSum()).isEqualTo(7.5);
+        assertThat(repository.getStatistics().getAvg()).isEqualTo(2.5);
+        assertThat(repository.getStatistics().getCount()).isEqualTo(3);
+        assertThat(repository.getStatistics().getMax()).isEqualTo(3.6);
+        assertThat(repository.getStatistics().getMin()).isEqualTo(1.5);
 
         Thread.sleep(2000);
-        assertThat(repository.getLastMinuteStatistics().getSum()).isEqualTo(0);
-        assertThat(repository.getLastMinuteStatistics().getAvg()).isEqualTo(0);
-        assertThat(repository.getLastMinuteStatistics().getCount()).isEqualTo(0);
-        assertThat(repository.getLastMinuteStatistics().getMax()).isEqualTo(0);
-        assertThat(repository.getLastMinuteStatistics().getMin()).isEqualTo(0);
+        assertThat(repository.getStatistics().getSum()).isEqualTo(0);
+        assertThat(repository.getStatistics().getAvg()).isEqualTo(0);
+        assertThat(repository.getStatistics().getCount()).isEqualTo(0);
+        assertThat(repository.getStatistics().getMax()).isEqualTo(0);
+        assertThat(repository.getStatistics().getMin()).isEqualTo(0);
     }
 
 }

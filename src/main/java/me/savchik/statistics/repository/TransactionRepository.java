@@ -8,6 +8,6 @@ public interface TransactionRepository {
 
     boolean addTransaction(Transaction transaction);
 
-    Statistics getLastMinuteStatistics();
+    Statistics getStatistics();
 
 }
