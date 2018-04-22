@@ -4,35 +4,35 @@ import static java.lang.System.currentTimeMillis;
 
 public class Transaction {
 
-    private double amount;
+    private Double amount;
 
-    private long time;
+    private Long time;
 
 
 
-    public Transaction(double amount, long time) {
+    public Transaction(Double amount, Long time) {
         this.amount = amount;
         this.time = time;
     }
 
-    public double getAmount() {
+    public Double getAmount() {
         return amount;
     }
 
-    public void setAmount(double amount) {
+    public void setAmount(Double amount) {
         this.amount = amount;
     }
 
-    public long getTime() {
+    public Long getTime() {
         return time;
     }
 
-    public void setTime(long time) {
+    public void setTime(Long time) {
         this.time = time;
     }
 
     public boolean isOlderThanMinute() {
-        long currentTimeMillis = currentTimeMillis();
+        Long currentTimeMillis = currentTimeMillis();
         return !(currentTimeMillis >= time && currentTimeMillis - time < 60000);
     }
 }

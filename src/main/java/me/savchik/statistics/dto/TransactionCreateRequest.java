@@ -5,29 +5,31 @@ import javax.validation.constraints.NotNull;
 public class TransactionCreateRequest {
 
     @NotNull
-    private double amount;
+    private Double amount;
 
     @NotNull
-    private long timestamp;
+    private Long timestamp;
 
-    public TransactionCreateRequest(double amount, long timestamp) {
+    public TransactionCreateRequest() { }
+
+    public TransactionCreateRequest(Double amount, Long timestamp) {
         this.amount = amount;
         this.timestamp = timestamp;
     }
 
-    public double getAmount() {
+    public Double getAmount() {
         return amount;
     }
 
-    public void setAmount(double amount) {
+    public void setAmount(Double amount) {
         this.amount = amount;
     }
 
-    public long getTimestamp() {
+    public Long getTimestamp() {
         return timestamp;
     }
 
-    public void setTimestamp(long timestamp) {
+    public void setTimestamp(Long timestamp) {
         this.timestamp = timestamp;
     }
 }
