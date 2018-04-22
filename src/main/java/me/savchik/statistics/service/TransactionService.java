@@ -11,8 +11,6 @@ import org.springframework.stereotype.Service;
 @Service
 public class TransactionService {
 
-    private Long expirationPeriod;
-
     private TransactionRepository transactionRepository;
 
     private final TransactionMapper mapper;
@@ -21,7 +19,6 @@ public class TransactionService {
     public TransactionService(@Value("${transaction.expirationPeriod.ms}") Long expirationPeriod,
                               TransactionRepository transactionRepository,
                               TransactionMapper mapper) {
-        this.expirationPeriod = expirationPeriod;
         this.transactionRepository = transactionRepository;
         this.mapper = mapper;
     }
